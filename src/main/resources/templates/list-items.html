@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Items List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <a href="http://localhost:8080/api/distribution-centres" target="_blank" class="btn btn-info" 
+   style="background-color: #3498db; border-color: #2980b9; position: absolute; top: 70px; right: 10px;">
+    API List of Distribution Centres
+    </a>
+    <a href="#" class="btn btn-danger logout-btn" onclick="confirmLogout()">Logout</a>
+    <h2>Items in the Clothes Warehouse</h2>    
+    <form action="#" th:action="@{/list-items}" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <select class="form-control" id="brand" name="brand">
+                        <option value="">All Brands</option>
+                        <option th:each="brand : ${brands}" 
+                                th:value="${brand}" 
+                                th:text="${brand}"
+                                th:selected="${brand == selectedBrand}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" class="form-control" id="year" name="year" th:value="${year}" />
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+                <a href="/list-items" class="btn btn-secondary ms-2">Clear Filters</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <a th:href="@{/list-items(year=2022,sort='brand')}" class="btn btn-info">
+            Display 2022 Items Sorted by Brand
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>
+                        <a th:href="@{/list-items(brand=${selectedBrand},year=${year},sort='brand')}" 
+                           class="text-decoration-none text-dark">
+                            Brand ↕
+                        </a>
+                    </th>
+                    <th>Year of Creation</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.brand}"></td>
+                    <td th:text="${item.yearOfCreation}"></td>
+                    <td th:text="${'$' + #numbers.formatDecimal(item.price, 1, 2)}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="/add-item" class="btn btn-success">Add New Item</a>
+        <a href="/index" class="btn btn-outline-primary ms-2">Back to Home</a>
+    </div>
+    <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                alert("You have been logged out successfully!");
+                window.location.href = "/login";
+            }
+        }
+    </script>
+</body>
+</html>

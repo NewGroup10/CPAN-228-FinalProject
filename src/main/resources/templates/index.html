@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Warehouse Mgmt System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <div sec:authorize="hasRole('ADMIN')">
+        <a href="/distribution-centres" class="btn btn-danger" 
+        style="background-color: #e74c3c; border-color: #c0392b; position: absolute; top: 70px; right: 10px;">
+            Distribution Centre
+        </a>
+    </div>
+    <br>
+    <a href="http://localhost:8080/api/distribution-centres" target="_blank" class="btn btn-info" 
+   style="background-color: #3498db; border-color: #2980b9; position: absolute; top: 130px; right: 10px;">
+    API List of Distribution Centres
+    </a>
+    <a href="#" class="btn btn-danger logout-btn" onclick="confirmLogout()">Logout</a>
+    <h2>Welcome to the Clothes Warehouse Management System!</h2>
+    <div class="mt-4">
+        <h4>About This Website</h4>
+        <p>This website is designed to help you manage the inventory of a warehouse by adding new items, viewing existing items, and sorting them by brand.</p>
+    </div>
+    <div class="mt-4">
+        <h4>How to Use the Website</h4>
+        <p>The website has 3 (three) main pages, each with its own set of buttons that provide different functionalities:</p>
+        <h4>Warehouse Mgmt System</h4>
+        <ul>
+            <li><strong>Add a New Item:</strong> Click on the <strong>"Add New Item"</strong> button to enter details of a new item such as its name, brand, year of creation, and price.</li>
+            <li><strong>View Items:</strong> Click on the <strong>"View Item List"</strong> button to see all items stored in the warehouse. You can sort the list by brand.</li>
+        </ul>
+        <h4>Add Item</h4>
+        <ul>
+            <li><strong>Add a New Item:</strong> Click on the <strong>"Add Item"</strong> button to add the item, based on all of the details of your item.</li>
+            <li><strong>Back to Home:</strong> Click on the <strong>"Back to Home"</strong> button to go back to the home page.</li>
+        </ul>
+        <h4>Items List</h4>
+        <ul>
+            <li><strong>Apply Filter:</strong> Click on the <strong>"Apply Filter"</strong> button to filter the items by brand and by year.</li>
+            <li><strong>Clear Filters:</strong> Click on the <strong>"Clear Filters"</strong> button to clear the filters and show all of the items.</li>
+            <li><strong>Sort 2022 Items:</strong> Click on the <strong>"Display 2022 Items Sorted by Brand"</strong> button to display only items from 2022 sorted by brand.</li>
+            <li><strong>Add a New Item:</strong> Click on the <strong>"Add New Item"</strong> button to enter details of a new item such as its name, brand, year of creation, and price.</li>
+            <li><strong>Back to Home:</strong> Click on the <strong>"Back to Home"</strong> button to go back to the home page.</li>
+        </ul>
+    </div>
+    <div class="mt-4">
+        <h4>Navigation</h4>
+        <p>Select an action below:</p>
+        <a href="/add-item" class="btn btn-primary">Add New Item</a>
+        <a href="/list-items" class="btn btn-secondary ml-2">View Item List</a>
+    </div>
+    <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                alert("You have been logged out successfully!");
+                window.location.href = "/login";
+            }
+        }
+    </script>
+</body>
+</html>

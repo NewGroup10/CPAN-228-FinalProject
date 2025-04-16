@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Distribution Centres</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .distribution-centre-card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .request-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+        .item-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .item-quantity {
+            min-width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <a href="#" class="btn btn-danger logout-btn" onclick="confirmLogout()">Logout</a>
+    <h2>Distribution Centres</h2>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="request-form">
+        <h3>Request Item</h3>
+        <form th:action="@{/request-item}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Brand:</label>
+                <select name="brand" class="form-control" required>
+                    <option value="">Select Brand</option>
+                    <option th:each="brand : ${brands}" 
+                            th:value="${brand}" 
+                            th:text="${brand}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Name:</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Request Item</button>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4" th:each="centre : ${distributionCentres}">
+            <div class="card distribution-centre-card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${centre.name}">Distribution Centre Name</h5>
+                    <p class="card-text">
+                        <strong>Location:</strong> 
+                        <span th:text="${centre.latitude}"></span>, 
+                        <span th:text="${centre.longitude}"></span>
+                    </p>
+                    <h6>Available Items:</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item" th:each="item : ${centre.items}" th:data-item-id="${item.id}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span th:text="${item.item.name}"></span> - 
+                                    <span th:text="${item.item.brand}"></span>
+                                </div>
+                                <div class="item-actions">
+                                    <button class="btn btn-sm btn-danger" 
+                                            th:onclick="'decreaseQuantity(' + ${item.id} + ')'">
+                                        <i class="bi bi-dash-circle"></i> -
+                                    </button>
+                                    <span class="badge bg-primary item-quantity" th:text="${item.quantity}"></span>
+                                    <button class="btn btn-sm btn-success" 
+                                            th:onclick="'increaseQuantity(' + ${item.id} + ')'">
+                                        <i class="bi bi-plus-circle"></i> +
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert("You have been logged out successfully!");
+                window.location.href = '/logout';
+            }
+        }
+        
+        function decreaseQuantity(itemId) {
+            fetch(`/api/distribution-centres/items/${itemId}/decrease`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to decrease quantity');
+                }
+            })
+            .then(data => {
+                const quantityElement = document.querySelector(`[data-item-id="${itemId}"] .item-quantity`);
+                if (quantityElement) {
+                    quantityElement.textContent = data.quantity;
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to decrease quantity: ' + error.message);
+            });
+        }
+        
+        function increaseQuantity(itemId) {
+            fetch(`/api/distribution-centres/items/${itemId}/increase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to increase quantity');
+                }
+            })
+            .then(data => {
+                const quantityElement = document.querySelector(`[data-item-id="${itemId}"] .item-quantity`);
+                if (quantityElement) {
+                    quantityElement.textContent = data.quantity;
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to increase quantity: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>
