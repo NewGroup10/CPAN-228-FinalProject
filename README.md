@@ -1,4 +1,4 @@
-# Warehouse Management System
+# CPAN-228-FinalProject
 
 This application manages distribution centres and items for a warehouse system.
 
